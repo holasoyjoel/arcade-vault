@@ -1,6 +1,6 @@
 # SPEC 01 — MVP visual: pantallas de Arcade Vault
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** —
 > **Date:** 2026-09-11
 > **Objective:** Portar a Next.js las 5 pantallas visuales del template (Biblioteca, Detalle, Reproductor, Auth, Salón de la Fama) con navegación real y datos mock, sin implementar ningún juego jugable.
