@@ -25,7 +25,7 @@ El repo es hoy el scaffold sin modificar de `create-next-app`. Este spec introdu
 - Simulación visual del reproductor (HUD que suma puntos random cada 220ms vía `setInterval`, subida de nivel, modal "fin del juego") tal como en el template — es un mock decorativo, no un juego real.
 - Persistencia en `localStorage` del navegador para usuario (`av_user`) y puntuaciones guardadas (`av_scores`), igual que el template.
 - Componentes de pantalla completa como Client Components (`"use client"`), replicando la estructura de estado del template (useState/useEffect/useMemo).
-- Tipografía: se mantiene Geist/Geist Mono ya configuradas en el layout actual. No se agregan las fuentes Google (Press Start 2P, Courier Prime, JetBrains Mono) del template; los nombres de fuente (`--pixel`, `--mono` en CSS) se remapean a las fuentes existentes.
+- Tipografía: se usan `Press Start 2P` y `JetBrains Mono` de `next/font/google` (ya introducidas en `app/layout.tsx` por el commit `fe0eb9c`, previo a este spec), reemplazando a Geist/Geist Mono. Los nombres de fuente (`--pixel`, `--mono` en CSS) se remapean a `--font-pixel`/`--font-mono`.
 
 **Out of scope (for future specs):**
 
@@ -75,7 +75,7 @@ Datos de sesión en `localStorage` (mismas claves que el template):
 ## Implementation plan
 
 1. Crear `lib/data.ts` con los tipos y el contenido migrado de `data.jsx` (`GAMES`, `CATS`, `PLAYERS`, `seededScores`).
-2. Portar `references/templates/styles.css` a `app/globals.css`, debajo de `@import "tailwindcss"` y `@theme inline`; remapear `--pixel`/`--mono` a las fuentes Geist ya declaradas. Eliminar el `body { font-family: Arial }` inconsistente detectado en el proyecto actual.
+2. ~~Portar `references/templates/styles.css` a `app/globals.css`~~ — **ya hecho** en el commit `fe0eb9c` (previo a este spec): CSS portado casi literal, `--pixel`/`--mono` remapeados a `--font-pixel`/`--font-mono` (Press Start 2P / JetBrains Mono), `#root` renombrado a `.av-root`, y sin el `body { font-family: Arial }` inconsistente. No requiere trabajo adicional.
 3. Crear `components/Nav.tsx` (`"use client"`) migrando `nav.jsx`, usando `next/link` y `usePathname` para el estado activo en vez de comparar `route.name`.
 4. Crear `app/layout.tsx` actualizado: montar `Nav` y el footer del template, manteniendo `LayoutProps<"/">`.
 5. Crear `app/biblioteca/page.tsx` (`"use client"`) migrando `biblioteca.jsx` (`Library` + `GameCard`), navegando con `next/link` a `/juegos/[id]`.
@@ -111,7 +111,7 @@ Datos de sesión en `localStorage` (mismas claves que el template):
 - **No:** incluir `home.jsx`/`about.jsx` de `references/templates/home-about/`. Ese set trae su propio `nav.jsx` y `styles.css` en conflicto con el set principal, y el archivo `Untitled` adjunto indica explícitamente que ese diseño está mal implementado.
 - **Sí:** mantener la simulación falsa de puntuación en el reproductor (`setInterval` random). Es un mock decorativo para completar la vista, no constituye "implementar un juego".
 - **Sí:** persistir usuario y scores en `localStorage`, igual que el template, para que la demo se sienta completa sin necesitar backend.
-- **No:** migrar a las fuentes Google Fonts del template (Press Start 2P, Courier Prime, JetBrains Mono). Se mantiene Geist/Geist Mono ya configuradas; las variables `--pixel`/`--mono` del CSS portado apuntan a las fuentes existentes.
+- **Sí (revisado durante /spec-impl):** migrar a las fuentes Google Fonts del template (Press Start 2P, JetBrains Mono) en vez de Geist/Geist Mono. Este cambio ya estaba hecho en el repo (commit `fe0eb9c`, previo a este spec) antes de que se aprobara la decisión original "No"; se mantiene por ser trabajo ya realizado y porque calza mejor con el diseño pixel-art que Geist.
 - **Sí:** portar `styles.css` casi literal a `app/globals.css` en vez de reescribir todo en utilidades Tailwind, para minimizar el riesgo de desviarse del diseño del template.
 - **Sí:** cada pantalla como Client Component completo (`"use client"`), en vez de separar en islas Server/Client, porque todas tienen estado o interactividad y el template ya está estructurado así.
 - **No:** crear tipos globales compartidos `Game`/`Score`/`Player`. Los tipos de este spec quedan locales a `lib/data.ts`; tipos globales se definirán cuando exista lógica de juego real.
