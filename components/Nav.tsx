@@ -2,17 +2,39 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+function readUser(): { name: string } | null {
+  try {
+    return JSON.parse(localStorage.getItem("av_user") || "null");
+  } catch {
+    return null;
+  }
+}
 
 export default function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<{ name: string } | null>(null);
+
+  useEffect(() => {
+    setUser(readUser());
+  }, [pathname]);
 
   const isBiblioteca = pathname === "/" || pathname.startsWith("/biblioteca") || pathname.startsWith("/juegos");
   const isSalon = pathname.startsWith("/salon");
   const isAuth = pathname.startsWith("/auth");
 
   const close = () => setOpen(false);
+
+  const signOut = () => {
+    try {
+      localStorage.removeItem("av_user");
+    } catch {
+      // localStorage deshabilitado (modo privado/SSR) — la app sigue siendo usable sin persistencia
+    }
+    setUser(null);
+  };
 
   return (
     <>
@@ -36,9 +58,15 @@ export default function Nav() {
           <span className="coin"></span>
           <span>CRÉDITOS · 03</span>
         </div>
-        <Link href="/auth" className={"btn auth-btn" + (isAuth ? " active" : "")}>
-          Iniciar Sesión
-        </Link>
+        {user ? (
+          <button className="btn ghost auth-btn" onClick={signOut}>
+            {user.name} ▾
+          </button>
+        ) : (
+          <Link href="/auth" className={"btn auth-btn" + (isAuth ? " active" : "")}>
+            Iniciar Sesión
+          </Link>
+        )}
         <button className="btn ghost hamburger" onClick={() => setOpen(true)} aria-label="Menú">
           ≡
         </button>
@@ -55,9 +83,15 @@ export default function Nav() {
         <Link href="/salon" className={isSalon ? "active" : ""} onClick={close}>
           Salón de la Fama
         </Link>
-        <Link href="/auth" className={isAuth ? "active" : ""} onClick={close}>
-          Iniciar Sesión
-        </Link>
+        {user ? (
+          <a className={isAuth ? "active" : ""} onClick={() => { signOut(); close(); }}>
+            Cerrar sesión ({user.name})
+          </a>
+        ) : (
+          <Link href="/auth" className={isAuth ? "active" : ""} onClick={close}>
+            Iniciar Sesión
+          </Link>
+        )}
         <div style={{ flex: 1 }}></div>
         <div className="pixel" style={{ fontSize: 9, color: "var(--ink-faint)", letterSpacing: "0.16em" }}>
           CRÉDITOS · 03
