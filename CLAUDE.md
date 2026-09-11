@@ -12,13 +12,8 @@ Arcade Vault — plataforma para jugar juegos online y competir por la mayor can
 
 **Workflow: Spec Driven Design** vía skills `/spec` y `/spec-impl` de `Klerith/fernando-skills` (`npx skills@latest add Klerith/fernando-skills`). Estas skills aún no están instaladas y no hay `specs/` en el repo.
 
-## Comandos
-
-- `npm run dev` — servidor de desarrollo (Turbopack por defecto en Next 16; sin flag `--turbopack`)
-- `npm run build` / `npm run start`
-- `npm run lint` — `eslint` directo (`next lint` fue eliminado en Next 16)
-- `npx tsc --noEmit` — typecheck (no hay script)
-- **Tests: no hay runner configurado.** Si se necesitan, es una decisión a plantear al usuario, no a asumir. Guías en `node_modules/next/dist/docs/01-app/02-guides/testing/`.
+## Skills
+Usa siempre /frontend-design para hacer interfaz de usuario.
 
 ## Stack y gotchas de versión
 
